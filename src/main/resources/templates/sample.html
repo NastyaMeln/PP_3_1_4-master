@@ -1,0 +1,124 @@
+<html>
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</head>
+<body>
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+    Launch demo modal
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row justify-content-center align-items-center text-center">
+                    <form id="editForm">
+                        <div class="form-group">
+                            <label for="id"><b>ID</b></label>
+                            <input type="text" class="form-control" id="id" value="16" readonly/>
+                        </div>
+                        <div class="form-group">
+                            <label for="firstName1"><b>First Name</b></label>
+                            <input type="text" class="form-control" id="firstName1" value="${user.firstName}" name="firstName"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName1"><b>Last Name</b></label>
+                            <input type="text" class="form-control" id="lastName1" value="${user.lastName}" name="lastName"/>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="age1"><b>Age</b></label>
+                            <input type="number" id="age1" class="form-control" value="${user.age}" name="age"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="email1"><b>Email</b></label>
+                            <input type="email" class="form-control" id="email1" value="${user.email}" name="email"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="password1"><b>Password</b></label>
+                            <input type="password" class="form-control" id="password1" name="password" value/>
+                        </div>
+                        <div class="form-group">
+                            <label for="roleEdit"><b>Role</b></label>
+                            <select name="roles" size="2" multiple class="form-control" id="roleEdit">
+                                <option value="0">ADMIN</option>
+                                <option value="1">USER</option>
+                            </select>
+                        </div>
+
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button id="submitEdit" type="submit" class="btn btn-primary">Edit</button>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+
+
+const editForm = document.getElementById("editForm")
+const url = "http://localhost:8080/api/users"
+
+const editUserId = document.getElementById("id")
+const editUserFirstName = document.getElementById("firstName1")
+const editUserLastName = document.getElementById("lastName1")
+const editUserAge = document.getElementById("age1")
+const editUserEmail = document.getElementById("email1")
+const editUserPassword = document.getElementById("password1")
+const editUserRoles = []
+document.getElementById('submitEdit').onclick = function() {
+    for (var option of document.getElementById('roleEdit').options)
+    {
+        if (option.selected) {
+            editUserRoles.push(option.text);
+        }
+    }
+    console.log(editUserRoles)
+}
+
+editForm.addEventListener("submit", function(e) {
+    e.preventDefault();
+    console.log(JSON.stringify({
+        id: editUserId.value,
+        firstName: editUserFirstName.value,
+        lastName: editUserLastName.value,
+        age: editUserAge.value,
+        email: editUserEmail.value,
+        password: editUserPassword.value,
+        roles: editUserRoles
+    }))
+    fetch(url, {
+        method: "PUT",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            id: editUserId.value,
+            firstName: editUserFirstName.value,
+            lastName: editUserLastName.value,
+            age: editUserAge.value,
+            email: editUserEmail.value,
+            password: editUserPassword.value,
+            roles: editUserRoles
+        })
+    }).then(res => res.json())
+        .then(data => {
+            console.log(data)
+        })
+    .catch(error => console.log(error))
+})
+</script>
+</html>
